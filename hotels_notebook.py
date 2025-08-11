@@ -1,15 +1,17 @@
 # Databricks notebook source
-# COMMAND ----------
 # MAGIC %pip install faker
 
 # COMMAND ----------
+
 dbutils.library.restartPython()
 
 # COMMAND ----------
+
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from faker import Faker
 import random
+from builtins import round as python_round
 
 fake = Faker()
 
@@ -70,11 +72,11 @@ for i in range(800):  # More realistic count for demo
     
     # Star rating by brand
     if "Grand" in brand_name:
-        star_rating = round(random.uniform(4.0, 5.0), 1)
+        star_rating = python_round(random.uniform(4.0, 5.0), 1)
     elif brand_name in ["Super 8", "Days Inn", "Travelodge"]:
-        star_rating = round(random.uniform(2.0, 3.5), 1)
+        star_rating = python_round(random.uniform(2.0, 3.5), 1)
     else:
-        star_rating = round(random.uniform(3.0, 4.5), 1)
+        star_rating = python_round(random.uniform(3.0, 4.5), 1)
     
     hotels.append((
         i,
@@ -82,14 +84,14 @@ for i in range(800):  # More realistic count for demo
         brand_name,
         fake.city(),
         state,
-        star_rating,
+        float(star_rating),  # Ensure star_rating is a float
         fake.date_between(start_date='-15y', end_date='-1y'),  # Established hotels
-        room_count,
-        round(random.uniform(min_adr * 0.8, max_adr * 1.2), 2),  # Base ADR with variance
+        int(room_count),  # Ensure room_count is an integer
+        float(python_round(random.uniform(min_adr * 0.8, max_adr * 1.2), 2)),  # Ensure base_adr is a float
         random.choice(market_segments),
-        random.choice([True, False]),  # Has conference facilities
-        random.choice([True, False]),  # Has pool
-        random.choice([True, False])   # Has fitness center
+        bool(random.choice([True, False])),  # Ensure boolean type
+        bool(random.choice([True, False])),  # Ensure boolean type
+        bool(random.choice([True, False]))   # Ensure boolean type
     ))
 
 schema = StructType([

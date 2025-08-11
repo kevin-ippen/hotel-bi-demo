@@ -4,6 +4,7 @@ from pyspark.sql.types import *
 from datetime import date, timedelta
 import random
 import math
+from builtins import round as python_round
 
 # Get hotel and guest data for realistic relationships
 hotels_df = spark.table("main.hotel_inc.hotels")
@@ -106,7 +107,7 @@ def generate_bookings():
             # Add random variance
             price_multiplier *= random.uniform(0.85, 1.15)
             
-            room_rate = round(base_adr * price_multiplier, 2)
+            room_rate = python_round(base_adr * price_multiplier, 2)
             
             # Booking status (most are confirmed)
             status = random.choices(
